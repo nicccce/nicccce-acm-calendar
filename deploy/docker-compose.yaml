@@ -3,7 +3,7 @@ networks:
     driver: bridge
 
 services:
-  app:
+  nicccce-acm-calendar-api:
     build: ../nicccce-acm-calendar-api
     container_name: nicccce-acm-calendar-api
     volumes:
@@ -17,7 +17,7 @@ services:
     networks:
       - nicccce-acm-calendar-net
 
-  mysql:
+  nicccce-acm-calendar-db:
     image: mysql:8.0
     container_name: nicccce-acm-calendar-db
     environment:
@@ -35,7 +35,7 @@ services:
     networks:
       - nicccce-acm-calendar-net
 
-  redis:
+  nicccce-acm-calendar-redis:
     image: redis:7.0
     container_name: nicccce-acm-calendar-redis
     command: --requirepass q4jrFTeVVRGOnna3KGWQ
@@ -48,16 +48,13 @@ services:
     networks:
       - nicccce-acm-calendar-net
 
-  nginx:
-    image: nginx:alpine
-    container_name: nicccce-acm-calendar-nginx
+  nicccce-acm-calendar-frontend:
+    build: ../nicccce-acm-calendar-page
+    container_name: nicccce-acm-calendar-frontend
     ports:
       - "80:80"
-    volumes:
-      - ../scrip-version:/usr/share/nginx/html
-      - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on:
-      - app
+      - nicccce-acm-calendar-api
     restart: always
     networks:
       - nicccce-acm-calendar-net
