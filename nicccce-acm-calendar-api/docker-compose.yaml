@@ -1,0 +1,34 @@
+# docker-compose.local.yaml
+# 本地测试环境搭建
+
+networks:
+  nicccce-acm-calendar-net:
+    driver: bridge
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: nicccce-acm-calendar-db
+    environment:
+      MYSQL_ROOT_PASSWORD: q4jrFTeVVRGOnna3KGWQ
+      MYSQL_DATABASE: nicccce-acm-calendar-db
+      TZ: Asia/Shanghai
+    ports:
+      - "3309:3306"
+    privileged: true
+    restart: always
+    networks:
+      - nicccce-acm-calendar-net
+
+  redis:
+    image: redis:7.0
+    container_name: nicccce-acm-calendar-redis
+    command: --requirepass q4jrFTeVVRGOnna3KGWQ
+    environment:
+      TZ: Asia/Shanghai
+    ports:
+      - "6379:6379"
+    privileged: true
+    restart: always
+    networks:
+      - nicccce-acm-calendar-net

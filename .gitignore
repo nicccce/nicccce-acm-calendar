@@ -1,0 +1,81 @@
+# Go相关
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+*.log
+
+# 构建输出
+bin/
+build/
+dist/
+target/
+
+# IDE相关
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 环境变量文件
+.env
+.env.local
+.env.production
+
+# Docker相关
+docker-compose.override.yml
+.dockerignore
+
+# 日志文件
+*.log
+logs/
+
+# 敏感配置文件
+config.yaml
+config.local.yaml
+config.prod.yaml
+deploy/config.prod.yaml
+
+# 数据库相关
+*.sql
+*.sql.gz
+
+# 临时文件
+tmp/
+temp/
+
+# Node.js相关（如果有的话）
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python相关（前端爬虫）
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.tox
+.pytest_cache/
+.coverage
+.coverage.*
+
+# 虚拟环境
+venv/
+env/
+ENV/
+
+# 数据文件
+scrip-version/json/*.json
