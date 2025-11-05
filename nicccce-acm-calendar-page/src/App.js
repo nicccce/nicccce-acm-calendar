@@ -1,5 +1,6 @@
 import React from 'react';
 import { Layout, Menu, theme } from 'antd';
+import { Outlet } from 'react-router-dom';
 import {
   UploadOutlined,
   UserOutlined,
@@ -31,10 +32,15 @@ function App() {
             {
               key: '2',
               icon: <VideoCameraOutlined />,
-              label: '比赛日历',
+              label: '比赛列表',
             },
             {
               key: '3',
+              icon: <UploadOutlined />,
+              label: '比赛日历',
+            },
+            {
+              key: '4',
               icon: <UploadOutlined />,
               label: '个人中心',
             },
@@ -61,10 +67,8 @@ function App() {
             borderRadius: borderRadiusLG,
           }}
         >
-          <div style={{ textAlign: 'center', paddingTop: 50 }}>
-            <h1>欢迎使用 ACM 竞赛日历</h1>
-            <p>在这里您可以查看即将到来的编程竞赛信息</p>
-          </div>
+          {/* 子路由将在这里渲染 */}
+          <Outlet />
         </Content>
       </Layout>
     </Layout>

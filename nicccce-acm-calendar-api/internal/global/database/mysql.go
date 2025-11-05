@@ -16,7 +16,9 @@ var DB *gorm.DB
 // autoMigrateModels 定义需要自动迁移的模型列表
 var autoMigrateModels = []interface{}{
 	&model.User{},
-	// 在这里添加其他模型
+	&model.Contest{},
+	&model.ContestPlatform{},
+	&model.ContestRefreshLog{},
 }
 
 func Init() {

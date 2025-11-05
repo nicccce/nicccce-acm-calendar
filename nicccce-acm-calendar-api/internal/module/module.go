@@ -23,5 +23,6 @@ func init() {
 	registerModule([]Module{
 		&user.ModuleUser{},
 		&ping.ModulePing{},
+		&crawler.ModuleCrawler{},
 	})
 }
