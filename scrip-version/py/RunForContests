@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# 设置循环标志
+flag=1
+files=./*.py
+json_dir="../json"  # 假设json目录与py目录同级
+
+while [ $flag == 1 ]
+do
+    # 清空json目录中的所有文件
+    if [ -d "$json_dir" ]; then
+        rm -f "$json_dir"/*.json
+        echo "已清空json目录: $json_dir"
+    else
+        echo "警告:未找到json目录: $json_dir"
+    fi
+
+    # 执行所有Python脚本（除了Union.py）
+    for file in $files
+    do
+        if [ "$file" != "./Union.py" ] && [ -f "$file" ]; then
+            echo "正在执行: $file"
+            python3 "$file"
+        fi
+    done
+
+    # 执行Union.py
+    echo "正在执行Union.py"
+    python3 Union.py
+
+    # 等待24小时（86400秒）
+    sleep 86400
+done

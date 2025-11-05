@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分形黄昏的算法竞赛平台</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .refresh-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .refresh-btn:hover {
+            background: #45a049;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .refresh-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .last-update {
+            color: white;
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .filters {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 6px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
+        }
+
+        .contest-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+        }
+
+        .contest-card {
+            background: white;
+            border-radius: 10px;
+            padding: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* 确保查看详情按钮在底部 */
+        }
+
+        .contest-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        /* 根据实际的platform字段值调整这些选择器 */
+        .contest-card.AtCoder { border-left: 4px solid #FF6B6B; }
+        .contest-card.Codeforces { border-left: 4px solid #4CAF50; }
+        .contest-card.LeetCode { border-left: 4px solid hsl(167, 100%, 54%); }
+        .contest-card.NowCoder { border-left: 4px solid #4285F4; }
+        .contest-card.Luogu { border-left: 4px solid #FF8C00; }
+        .contest-card.洛谷 { border-left: 4px solid #FF8C00; }
+        .contest-card.牛客 { border-left: 4px solid #4285F4; }
+
+        .platform-tag {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .AtCoder .platform-tag { background: #FF6B6B; }
+        .Codeforces .platform-tag { background: #4CAF50; }
+        .LeetCode .platform-tag { background: hsl(167, 100%, 54%); }
+        .NowCoder .platform-tag { background: #4285F4; }
+        .Luogu .platform-tag { background: #FF8C00; }
+        .洛谷 .platform-tag { background: #FF8C00; }
+        .牛客 .platform-tag { background: #4285F4; }
+
+        .contest-name {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+            line-height: 1.3;
+            display: -webkit-box;
+            /* -webkit-line-clamp: 2; */
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .contest-info {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .info-icon {
+            font-size: 0.9rem;
+            min-width: 16px;
+        }
+
+        .time-remaining {
+            font-weight: bold;
+            color: #e74c3c;
+            margin-top: 8px;
+            font-size: 0.8rem;
+        }
+
+        .contest-link {
+            display: inline-block;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            margin-top: 10px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 0.85rem;
+            width: 100%; /* 确保按钮宽度占满整个卡片 */
+            height: 40px; /* 固定按钮高度 */
+        }
+
+        .contest-link:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: 1.1rem;
+            padding: 40px;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .no-contests {
+            text-align: center;
+            color: white;
+            font-size: 1rem;
+            padding: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+            flex-shrink: 0;
+        }
+
+        .status-upcoming { background-color: #FFA500; }
+        .status-running { background-color: #4CAF50; }
+        .status-finished { background-color: #666; }
+
+        @media (max-width: 768px) {
+            .contest-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 10px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filters {
+                justify-content: center;
+            }
+            
+            .contest-card {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .contest-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏆 分形黄昏的算法竞赛平台</h1>
+            <p>一站式获取近10日各大平台竞赛信息</p>
+        </div>
+
+        <div class="controls">
+            <button class="refresh-btn" id="refreshBtn">🔄 刷新竞赛信息</button>
+            <div class="last-update" id="lastUpdate"></div>
+            <div class="filters">
+                <button class="filter-btn active" data-platform="all">全部</button>
+                <button class="filter-btn" data-platform="Codeforces">Codeforces</button>
+                <button class="filter-btn" data-platform="LeetCode">LeetCode</button>
+                <button class="filter-btn" data-platform="牛客">牛客</button>
+                <button class="filter-btn" data-platform="洛谷">洛谷</button>
+                <button class="filter-btn" data-platform="AtCoder">AtCoder</button>
+            </div>
+        </div>
+
+        <div id="contestContainer" class="contest-grid">
+            <div class="loading">正在加载竞赛信息...</div>
+        </div>
+    </div>
+
+    <script>
+        class ContestAggregator {
+            constructor() {
+                this.contests = [];
+                this.filteredContests = [];
+                // platformMap 映射用于显示平台名称
+                this.platformMap = {};
+                this.init();
+            }
+
+            init() {
+                this.bindEvents();
+                this.loadContests();
+            }
+
+            bindEvents() {
+                document.getElementById('refreshBtn').addEventListener('click', () => {
+                    this.loadContests();
+                });
+
+                // 绑定筛选按钮事件
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        const platform = e.target.dataset.platform;
+                        this.filterContests(platform);
+                    });
+                });
+            }
+
+            async loadContests() {
+                const refreshBtn = document.getElementById('refreshBtn');
+                const contestContainer = document.getElementById('contestContainer');
+                
+                refreshBtn.disabled = true;
+                refreshBtn.textContent = '🔄 正在加载...';
+                contestContainer.innerHTML = '<div class="loading">正在加载竞赛信息...</div>';
+
+                try {
+                    // 从本地JSON文件加载数据
+                    const response = await fetch('json/all_contest.json');
+                    let allContests = await response.json();
+                    
+                    // 处理数据格式并过滤
+                    this.contests = allContests
+                        .map(contest => ({
+                            ...contest,
+                            id: `${contest.platform}-${contest.name}`,
+                            startTime: new Date(contest.start_time * 1000).toISOString(),
+                            endTime: new Date(contest.end_time * 1000).toISOString(),
+                            duration: contest.durationSeconds,
+                            url: contest.contest_url.trim(), // 去除URL末尾的空格
+                            platform: contest.platform
+                        }))
+                        .filter(contest => this.isWithinTenDays(contest)); // 只保留近10天的竞赛
+                    
+                    // 动态构建 platformMap
+                    this.buildPlatformMap();
+                    
+                    this.updateLastUpdate();
+                    this.filterContests('all');
+                } catch (error) {
+                    console.error('加载竞赛数据失败:', error);
+                    contestContainer.innerHTML = `<div class="error">加载失败: ${error.message}</div>`;
+                } finally {
+                    refreshBtn.disabled = false;
+                    refreshBtn.textContent = '🔄 刷新竞赛信息';
+                }
+            }
+
+            // 动态构建平台映射关系
+            buildPlatformMap() {
+                const platformNames = [...new Set(this.contests.map(c => c.platform))];
+                
+                // 默认映射关系，你可以根据实际情况调整
+                const defaultMap = {
+                    'AtCoder': 'AtCoder',
+                    'Codeforces': 'Codeforces',
+                    'LeetCode': 'LeetCode',
+                    'NowCoder': '牛客',
+                    '牛客': '牛客',
+                    'Luogu': '洛谷',
+                    '洛谷': '洛谷'
+                };
+                
+                // 为每个平台创建映射
+                platformNames.forEach(platform => {
+                    this.platformMap[platform] = defaultMap[platform] || platform;
+                });
+                
+                console.log('平台映射关系:', this.platformMap);
+            }
+
+            // 判断竞赛是否在近10天内（包括即将开始和进行中的竞赛）
+            isWithinTenDays(contest) {
+                const now = new Date();
+                const start = new Date(contest.startTime);
+                const end = new Date(contest.endTime);
+                const tenDaysLater = new Date(now.getTime() + 10 * 24 * 60 * 60 * 1000);
+
+                // 竞赛在10天内开始，或者正在进行中（结束时间在现在之后）
+                return (start >= now && start <= tenDaysLater) || (start <= now && end >= now);
+            }
+
+            updateLastUpdate() {
+                const now = new Date();
+                document.getElementById('lastUpdate').textContent = 
+                    `最后更新: ${now.toLocaleString('zh-CN')}`;
+            }
+
+            filterContests(platform) {
+                if (platform === 'all') {
+                    this.filteredContests = [...this.contests];
+                } else {
+                    this.filteredContests = this.contests.filter(contest => contest.platform === platform);
+                }
+                this.renderContests();
+            }
+
+            renderContests() {
+                const container = document.getElementById('contestContainer');
+                
+                if (this.filteredContests.length === 0) {
+                    container.innerHTML = '<div class="no-contests">暂无相关竞赛信息</div>';
+                    return;
+                }
+
+                // 按开始时间排序
+                this.filteredContests.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
+
+                container.innerHTML = this.filteredContests.map(contest => {
+                    const status = this.getContestStatus(contest);
+                    return `
+                        <div class="contest-card ${contest.platform}">
+                            <div class="platform-tag">${this.platformMap[contest.platform] || contest.platform}</div>
+                            <div class="contest-name">${contest.name}</div>
+                            <div class="contest-info">
+                                <div class="info-item">
+                                    <span class="info-icon">⏰</span>
+                                    <span>${new Date(contest.startTime).toLocaleString('zh-CN', {
+                                        month: 'numeric',
+                                        day: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                    })}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-icon">⏱️</span>
+                                    <span>${this.formatDuration(contest.duration)}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="status-indicator status-${status.type}"></span>
+                                    <span>${status.text}</span>
+                                </div>
+                                <div class="time-remaining" id="timer-${this.escapeId(contest.id)}">
+                                    ${this.getTimeRemaining(contest.startTime, contest.endTime)}
+                                </div>
+                                <a href="${contest.url}" target="_blank" class="contest-link">查看详情</a>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                // 启动倒计时更新
+                this.startTimers();
+            }
+
+            escapeId(id) {
+                return id.replace(/[^a-zA-Z0-9]/g, '_');
+            }
+
+            getContestStatus(contest) {
+                const now = new Date();
+                const start = new Date(contest.startTime);
+                const end = new Date(contest.endTime);
+
+                if (now < start) {
+                    return { type: 'upcoming', text: '即将开始' };
+                } else if (now > end) {
+                    return { type: 'finished', text: '已结束' };
+                } else {
+                    return { type: 'running', text: '进行中' };
+                }
+            }
+
+            startTimers() {
+                // 清除之前的定时器
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                }
+
+                this.timerInterval = setInterval(() => {
+                    this.filteredContests.forEach(contest => {
+                        const timerElement = document.getElementById(`timer-${this.escapeId(contest.id)}`);
+                        if (timerElement) {
+                            timerElement.innerHTML = this.getTimeRemaining(contest.startTime, contest.endTime);
+                        }
+                    });
+                }, 1000);
+            }
+
+            getTimeRemaining(startTime, endTime) {
+                const now = new Date();
+                const start = new Date(startTime);
+                const end = new Date(endTime);
+
+                if (now < start) {
+                    // 竞赛未开始
+                    const diff = start - now;
+                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                    if (days > 0) {
+                        return `⏳ ${days}天${hours}小时后`;
+                    } else if (hours > 0) {
+                        return `⏳ ${hours}小时${minutes}分钟`;
+                    } else {
+                        return `⏳ ${minutes}分${seconds}秒`;
+                    }
+                } else if (now > end) {
+                    // 竞赛已结束
+                    return '<span style="color: #666;">🏁 已结束</span>';
+                } else {
+                    // 竞赛进行中
+                    const diff = end - now;
+                    const hours = Math.floor(diff / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                    if (hours > 0) {
+                        return `🚀 剩余${hours}小时`;
+                    } else {
+                        return `🚀 剩余${minutes}分${seconds}秒`;
+                    }
+                }
+            }
+
+            formatDuration(seconds) {
+                if (!seconds) return '未知';
+                
+                const hours = Math.floor(seconds / 3600);
+                const minutes = Math.floor((seconds % 3600) / 60);
+                
+                if (hours > 0) {
+                    return `${hours}小时${minutes > 0 ? `${minutes}分钟` : ''}`;
+                } else {
+                    return `${minutes}分钟`;
+                }
+            }
+        }
+
+        // 初始化应用
+        document.addEventListener('DOMContentLoaded', () => {
+            new ContestAggregator();
+        });
+
+        // 添加错误处理和用户提示
+        window.addEventListener('error', (e) => {
+            console.error('应用错误:', e.error);
+        });
+    </script>
+</body>
+</html>
