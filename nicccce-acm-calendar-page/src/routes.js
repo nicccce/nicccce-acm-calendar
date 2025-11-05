@@ -10,8 +10,8 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<App />}>
         <Route index element={<HomePage />} />
-        <Route path="calendar" element={<CalendarPage />} />
         <Route path="contests" element={<ContestListPage />} />
+        <Route path="calendar" element={<CalendarPage />} />
       </Route>
     </Routes>
   );

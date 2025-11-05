@@ -3,7 +3,6 @@ package module
 import (
 	"github.com/gin-gonic/gin"
 	"nicccce-acm-calendar-api/internal/module/ping"
-	"nicccce-acm-calendar-api/internal/module/user"
 )
 
 type Module interface {
