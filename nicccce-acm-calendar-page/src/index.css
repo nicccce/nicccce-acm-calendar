@@ -463,6 +463,25 @@ code {
   }
 }
 
+@keyframes dynamicBlur {
+  0%, 100% {
+    filter: blur(0);
+    opacity: 1;
+  }
+  25% {
+    filter: blur(1px);
+    opacity: 0.9;
+  }
+  50% {
+    filter: blur(2px);
+    opacity: 0.8;
+  }
+  75% {
+    filter: blur(0.5px);
+    opacity: 0.95;
+  }
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);
