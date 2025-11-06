@@ -115,9 +115,9 @@ const HomePage = () => {
 
   return (
     <div>
-      <Title level={2}>🏆 ACM 竞赛日历</Title>
+      <Title level={2}>分形黄昏的日历</Title>
       <Paragraph>
-        一站式获取近10日各大平台竞赛信息
+        近10日各大平台竞赛信息
       </Paragraph>
       
       {/* 控制区域 */}
