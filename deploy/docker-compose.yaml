@@ -4,14 +4,12 @@ networks:
 
 services:
   nicccce-acm-calendar-api:
-    build: ../nicccce-acm-calendar-api
+    image: nicccce-acm-calendar-api
     container_name: nicccce-acm-calendar-api
     volumes:
       - ./config.prod.yaml:/app/config.yaml
-    ports:
-      - "8080:8080"
     depends_on:
-      mysql:
+      nicccce-acm-calendar-db:
         condition: service_healthy
     restart: always
     networks:
@@ -21,7 +19,7 @@ services:
     image: mysql:8.0
     container_name: nicccce-acm-calendar-db
     environment:
-      MYSQL_ROOT_PASSWORD: 12345678
+      MYSQL_ROOT_PASSWORD: q4jrFTeVVRGOnna3KGWQ
       MYSQL_DATABASE: nicccce-acm-calendar-db
       TZ: Asia/Shanghai
     healthcheck:
@@ -41,21 +39,19 @@ services:
     command: --requirepass q4jrFTeVVRGOnna3KGWQ
     environment:
       TZ: Asia/Shanghai
-    ports:
-      - "6379:6379"
     privileged: true
     restart: always
     networks:
       - nicccce-acm-calendar-net
 
   nicccce-acm-calendar-frontend:
-    build: ../nicccce-acm-calendar-page
+    image: nicccce-acm-calendar-frontend
     container_name: nicccce-acm-calendar-frontend
-    ports:
-      - "80:80"
     depends_on:
       - nicccce-acm-calendar-api
     restart: always
+    ports: 
+        - 8030:80
     networks:
       - nicccce-acm-calendar-net
 

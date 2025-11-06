@@ -22,6 +22,9 @@ FROM nginx:alpine
 # 删除默认的nginx配置文件
 RUN rm /etc/nginx/conf.d/default.conf
 
+# 创建一个空的default.conf文件以避免启动警告
+RUN touch /etc/nginx/conf.d/default.conf
+
 # 复制自定义的nginx配置文件
 COPY nginx.conf /etc/nginx/nginx.conf
 
