@@ -2,7 +2,7 @@ body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
@@ -26,7 +26,7 @@ code {
   animation: fadeIn 0.8s ease-out;
 }
 
-/* 头部区域样式 - 现代化设计 */
+/* 头部区域样式 - 简洁现代化 */
 .header-section {
   text-align: center;
   margin-bottom: 50px;
@@ -37,29 +37,12 @@ code {
     rgba(99, 102, 241, 0.15),
     rgba(139, 92, 246, 0.08));
   border-radius: 20px;
-  backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow:
     0 20px 40px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.1),
     0 0 0 1px rgba(255, 255, 255, 0.05);
   animation: headerEntrance 1.2s ease-out;
-}
-
-.header-section::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 80%;
-  height: 80%;
-  background: radial-gradient(circle,
-    rgba(99, 102, 241, 0.1) 0%,
-    rgba(139, 92, 246, 0.05) 100%);
-  filter: blur(60px);
-  z-index: -1;
-  opacity: 0.6;
 }
 
 .header-section::after {
@@ -78,78 +61,37 @@ code {
   animation: expandLine 1.2s ease-out;
 }
 
-/* 主标题样式 - 现代化设计 */
+/* 主标题样式 - 简洁现代化 */
 .main-title {
-  font-size: 3.5rem !important;
+  font-size: 3.2rem !important;
   margin-bottom: 15px !important;
   position: relative;
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-shadow: 0px 2px 2px rgba(255, 255, 255, 0.767);
   background: linear-gradient(135deg,
     #ffffff 0%,
-    rgba(255, 255, 255, 0.9) 100%);
+    rgb(255, 255, 255) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  background-size: 200% 200%;
-  animation: titleGlow 4s ease-in-out infinite alternate;
-  text-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.2),
-    0 8px 24px rgba(0, 0, 0, 0.3);
-  position: relative;
-  overflow: visible;
-}
-
-.main-title::after {
-  content: '🏆';
-  position: absolute;
-  top: -10px;
-  right: -30px;
-  font-size: 2rem;
-  opacity: 0.8;
-  animation: floatEmoji 6s ease-in-out infinite;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
 }
 
 .title-text {
   display: inline-block;
   animation: slideInUp 0.8s ease-out;
-  position: relative;
 }
 
-.title-text::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -10%;
-  width: 120%;
-  height: 100%;
-  background: linear-gradient(90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    transparent 100%);
-  animation: shimmer 3s ease-in-out infinite;
-}
-
-/* 副标题样式 - 现代化设计 */
+/* 副标题样式 - 简洁现代化 */
 .subtitle {
-  font-size: 1.5rem !important;
+  font-size: 1.3rem !important;
   opacity: 0.9;
   animation: slideInUp 1s ease-out;
   animation-delay: 0.3s;
   animation-fill-mode: both;
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.85);
-  letter-spacing: 0.03em;
-  margin-top: 10px;
-  position: relative;
-  padding: 8px 20px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 15px;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  display: inline-block;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.02em;
 }
 
 /* 控制区域样式 */
@@ -205,6 +147,8 @@ code {
 .filter-btn:hover, .filter-btn.active {
   background: rgba(255,255,255,0.3);
   border-color: rgba(255,255,255,0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
 /* 竞赛网格样式 */
@@ -232,6 +176,7 @@ code {
   transform-style: preserve-3d;
   will-change: transform, box-shadow;
   border: 1px solid rgba(0,0,0,0.05);
+  animation: cardEntrance 0.6s ease-out forwards;
 }
 
 .contest-card:hover {
@@ -413,41 +358,6 @@ code {
   }
 }
 
-@keyframes titleGlow {
-  0% {
-    background-position: 0% 50%;
-    filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.6));
-  }
-  50% {
-    filter: drop-shadow(0 0 25px rgba(139, 92, 246, 0.8));
-  }
-  100% {
-    background-position: 100% 50%;
-    filter: drop-shadow(0 0 30px rgba(236, 72, 153, 0.9));
-  }
-}
-
-@keyframes floatEmoji {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  25% {
-    transform: translateY(-8px) rotate(5deg);
-  }
-  75% {
-    transform: translateY(4px) rotate(-3deg);
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-}
-
 @keyframes cardEntrance {
   0% {
     opacity: 0;
@@ -460,25 +370,6 @@ code {
   100% {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@keyframes dynamicBlur {
-  0%, 100% {
-    filter: blur(0);
-    opacity: 1;
-  }
-  25% {
-    filter: blur(1px);
-    opacity: 0.9;
-  }
-  50% {
-    filter: blur(2px);
-    opacity: 0.8;
-  }
-  75% {
-    filter: blur(0.5px);
-    opacity: 0.95;
   }
 }
 
@@ -513,11 +404,11 @@ code {
   }
   
   .main-title {
-    font-size: 2.8rem !important;
+    font-size: 2.5rem !important;
   }
   
   .subtitle {
-    font-size: 1.2rem !important;
+    font-size: 1.1rem !important;
   }
   
   .header-section::after {
@@ -532,21 +423,12 @@ code {
   }
   
   .main-title {
-    font-size: 2.4rem !important;
+    font-size: 2.2rem !important;
   }
   
   .header-section {
     padding: 20px 0;
     margin-bottom: 30px;
-  }
-  
-  .main-title::after {
-    display: none;
-  }
-  
-  .header-section::after {
-    width: 120px;
-    height: 4px;
   }
 }
 
@@ -554,11 +436,6 @@ code {
 @media (min-width: 1025px) {
   body {
     padding: 30px;
-  }
-  
-  .header-section {
-    margin-bottom: 50px;
-    padding: 40px 0;
   }
   
   .contest-card {
