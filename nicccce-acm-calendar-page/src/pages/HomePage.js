@@ -17,7 +17,7 @@ const HomePage = () => {
   const fetchContests = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await apiService.getContests();
       // 确保数据是数组格式
@@ -37,7 +37,7 @@ const HomePage = () => {
   const refreshData = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       await apiService.refreshAllPlatforms();
       await fetchContests();
@@ -63,10 +63,10 @@ const HomePage = () => {
   // 格式化持续时间
   const formatDuration = (seconds) => {
     if (!seconds) return '未知';
-    
+
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
-    
+
     if (hours > 0) {
       return `${hours}小时${minutes > 0 ? `${minutes}分钟` : ''}`;
     } else {
@@ -114,16 +114,16 @@ const HomePage = () => {
   };
 
   return (
-      <div className="homepage-container">
-        <div className="header-section">
-          <Title level={2} className="main-title">
-            <span className="title-text">分形黄昏的日历</span>
-          </Title>
-          <Paragraph className="subtitle">
-            近10日各大平台竞赛信息
-          </Paragraph>
-        </div>
-      
+    <div className="homepage-container">
+      <div className="header-section">
+        <Title level={2} className="main-title">
+          <span className="title-text">分形黄昏的日历</span>
+        </Title>
+        <Paragraph className="subtitle">
+          近10日各大平台竞赛信息
+        </Paragraph>
+      </div>
+
       {/* 控制区域 */}
       <Card style={{ marginBottom: 24 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10 }}>
@@ -145,7 +145,7 @@ const HomePage = () => {
             {lastUpdate && `最后更新: ${lastUpdate.toLocaleString('zh-CN')}`}
           </div>
         </div>
-        
+
         {/* 平台筛选器 */}
         <div style={{ marginTop: 15, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
           <Button
@@ -177,7 +177,7 @@ const HomePage = () => {
           ))}
         </div>
       </Card>
-      
+
       {/* 错误提示 */}
       {error && (
         <Alert
@@ -188,7 +188,7 @@ const HomePage = () => {
           style={{ marginBottom: 24 }}
         />
       )}
-      
+
       {/* 比赛卡片网格 */}
       <Row gutter={[16, 16]}>
         {filteredContests.length === 0 ? (
@@ -234,7 +234,7 @@ const HomePage = () => {
                 >
                   {contest.platform}
                 </Tag>
-                
+
                 {/* 比赛名称 */}
                 <div style={{
                   fontSize: '1rem',
@@ -249,7 +249,7 @@ const HomePage = () => {
                 }}>
                   {contest.name}
                 </div>
-                
+
                 {/* 比赛信息 */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6, color: '#666', fontSize: '0.8rem' }}>
@@ -286,7 +286,7 @@ const HomePage = () => {
                     {contest.time_remaining || '未知'}
                   </div>
                 </div>
-                
+
                 {/* 查看详情按钮 */}
                 <a
                   href={contest.contest_url}
@@ -315,6 +315,35 @@ const HomePage = () => {
           ))
         )}
       </Row>
+      {/* Footer */}
+      <div className="footer" style={{
+        marginTop: 40,
+        padding: '25px 0',
+        width: '100%',
+        textAlign: 'center',
+        color: '#4a5568',
+        fontSize: '0.9rem',
+        backgroundColor: 'rgba(249, 250, 251, 0.9)',
+        borderTop: '1px solid rgba(229, 231, 235, 0.8)'
+      }}>
+        <p style={{ margin: 0, fontWeight: '500', letterSpacing: '0.5px' }}>
+          © 2024 分形黄昏的日历. All rights reserved.
+        </p>
+        <p style={{ margin: '8px 0 0 0' }}>
+          <a
+            href="https://github.com/nicccce/nicccce-acm-calendar"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          color: '#6366f1',
+          textDecoration: 'none',
+          fontWeight: '500'
+        }}
+          >
+            GitHub 项目地址
+          </a>
+        </p>
+      </div>
     </div>
   );
 };
