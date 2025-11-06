@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // 创建axios实例
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: 'https://分形黄昏.nicccce.xyz/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json'

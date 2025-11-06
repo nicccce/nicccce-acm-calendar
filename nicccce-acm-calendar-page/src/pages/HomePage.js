@@ -87,14 +87,14 @@ const HomePage = () => {
   // 获取平台颜色
   const getPlatformColor = (platform) => {
     switch (platform) {
-      case 'Codeforces': return '#4CAF50';
-      case 'AtCoder': return '#FF6B6B';
-      case 'LeetCode': return 'hsl(167, 100%, 54%)';
+      case 'Codeforces': return '#10b981';
+      case 'AtCoder': return '#ef4444';
+      case 'LeetCode': return '#06b6d4';
       case 'NowCoder':
-      case '牛客': return '#4285F4';
+      case '牛客': return '#3b82f6';
       case 'Luogu':
-      case '洛谷': return '#FF8C00';
-      default: return '#1890ff';
+      case '洛谷': return '#f59e0b';
+      default: return '#6366f1';
     }
   };
 
@@ -114,11 +114,15 @@ const HomePage = () => {
   };
 
   return (
-    <div>
-      <Title level={2}>分形黄昏的日历</Title>
-      <Paragraph>
-        近10日各大平台竞赛信息
-      </Paragraph>
+      <div className="homepage-container">
+        <div className="header-section">
+          <Title level={2} className="main-title">
+            <span className="title-text">分形黄昏的日历</span>
+          </Title>
+          <Paragraph className="subtitle">
+            近10日各大平台竞赛信息
+          </Paragraph>
+        </div>
       
       {/* 控制区域 */}
       <Card style={{ marginBottom: 24 }}>
@@ -129,6 +133,10 @@ const HomePage = () => {
               icon={<ReloadOutlined />}
               onClick={refreshData}
               loading={loading}
+              style={{
+                background: 'linear-gradient(45deg, #6366f1, #8b5cf6)',
+                border: 'none'
+              }}
             >
               刷新竞赛信息
             </Button>
@@ -143,6 +151,12 @@ const HomePage = () => {
           <Button
             type={activeFilter === 'all' ? 'primary' : 'default'}
             onClick={() => filterContests('all')}
+            style={
+              activeFilter === 'all' ? {
+                background: 'linear-gradient(45deg, #6366f1, #8b5cf6)',
+                border: 'none'
+              } : {}
+            }
           >
             全部
           </Button>
@@ -151,6 +165,12 @@ const HomePage = () => {
               key={platform}
               type={activeFilter === platform ? 'primary' : 'default'}
               onClick={() => filterContests(platform)}
+              style={
+                activeFilter === platform ? {
+                  background: getPlatformColor(platform),
+                  border: 'none'
+                } : {}
+              }
             >
               {platform}
             </Button>
@@ -175,14 +195,20 @@ const HomePage = () => {
           <Col span={24}>
             <Card>
               <div style={{ textAlign: 'center', padding: 40, color: '#666' }}>
-                {loading ? '正在加载竞赛信息...' : '暂无相关竞赛信息'}
+                {loading ? (
+                  <div className="loading-container">
+                    <div className="loading-spinner"></div>
+                    <div className="loading-text">正在加载竞赛信息...</div>
+                  </div>
+                ) : '暂无相关竞赛信息'}
               </div>
             </Card>
           </Col>
         ) : (
-          filteredContests.map(contest => (
+          filteredContests.map((contest, index) => (
             <Col xs={24} sm={12} md={8} lg={6} key={contest.id}>
               <Card
+                className={`contest-card card-delay-${(index % 8) + 1}`}
                 size="small"
                 style={{
                   height: '100%',
@@ -268,7 +294,7 @@ const HomePage = () => {
                   rel="noopener noreferrer"
                   style={{
                     display: 'inline-block',
-                    background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                    background: 'linear-gradient(45deg, #6366f1, #8b5cf6)',
                     color: 'white',
                     textDecoration: 'none',
                     padding: '6px 12px',
