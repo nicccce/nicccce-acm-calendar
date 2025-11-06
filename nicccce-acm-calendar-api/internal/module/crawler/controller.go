@@ -2,7 +2,6 @@ package crawler
 
 import (
 	"fmt"
-	"net/http"
 	"strconv"
 	"time"
 
@@ -43,7 +42,7 @@ func (m *ModuleCrawler) GetContests(c *gin.Context) {
 	}
 
 	if err := query.Find(&contests).Error; err != nil {
-		response.Error(c, http.StatusInternalServerError, "Failed to get contests")
+		response.Fail(c, response.ErrServerInternal)
 		return
 	}
 
@@ -62,13 +61,13 @@ func (m *ModuleCrawler) GetContests(c *gin.Context) {
 func (m *ModuleCrawler) GetContestByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		response.Error(c, http.StatusBadRequest, "Invalid contest ID")
+		response.Fail(c, response.ErrInvalidRequest)
 		return
 	}
 
 	var contest model.Contest
 	if err := database.DB.First(&contest, id).Error; err != nil {
-		response.Error(c, http.StatusNotFound, "Contest not found")
+		response.Fail(c, response.ErrNotFound)
 		return
 	}
 
@@ -88,7 +87,7 @@ func (m *ModuleCrawler) GetContestsByPlatform(c *gin.Context) {
 		Where("start_time >= ?", time.Now()).
 		Order("start_time ASC").
 		Find(&contests).Error; err != nil {
-		response.Error(c, http.StatusInternalServerError, "Failed to get contests")
+		response.Fail(c, response.ErrServerInternal)
 		return
 	}
 
@@ -117,7 +116,7 @@ func (m *ModuleCrawler) GetContestsByStatus(c *gin.Context) {
 	}
 
 	if err := query.Find(&contests).Error; err != nil {
-		response.Error(c, http.StatusInternalServerError, "Failed to get contests")
+		response.Fail(c, response.ErrServerInternal)
 		return
 	}
 
@@ -137,21 +136,18 @@ func (m *ModuleCrawler) RefreshAllPlatforms(c *gin.Context) {
 	userID := uint(1) // 暂时使用固定用户ID，后续可以集成用户系统
 	allowed, remaining, err := m.limiter.CheckRefreshLimit(userID, "all")
 	if err != nil {
-		response.Error(c, http.StatusInternalServerError, "Internal server error")
+		response.Fail(c, response.ErrServerInternal)
 		return
 	}
 
 	if !allowed {
-		response.Error(c, http.StatusTooManyRequests, gin.H{
-			"message": "Rate limit exceeded",
-			"retry_after": remaining.Seconds(),
-		})
+		response.Fail(c, response.ErrServerInternal.WithTips("Rate limit exceeded", fmt.Sprintf("retry_after: %f", remaining.Seconds())))
 		return
 	}
 
 	results, err := m.service.RefreshAllPlatforms(c.Request.Context())
 	if err != nil {
-		response.Error(c, http.StatusInternalServerError, "Failed to refresh contests")
+		response.Fail(c, response.ErrServerInternal)
 		return
 	}
 
@@ -166,21 +162,18 @@ func (m *ModuleCrawler) RefreshSinglePlatform(c *gin.Context) {
 	userID := uint(1)
 	allowed, remaining, err := m.limiter.CheckRefreshLimit(userID, platform)
 	if err != nil {
-		response.Error(c, http.StatusInternalServerError, "Internal server error")
+		response.Fail(c, response.ErrServerInternal)
 		return
 	}
 
 	if !allowed {
-		response.Error(c, http.StatusTooManyRequests, gin.H{
-			"message": "Rate limit exceeded",
-			"retry_after": remaining.Seconds(),
-		})
+		response.Fail(c, response.ErrServerInternal.WithTips("Rate limit exceeded", fmt.Sprintf("retry_after: %f", remaining.Seconds())))
 		return
 	}
 
 	result, err := m.service.RefreshSinglePlatform(c.Request.Context(), platform)
 	if err != nil {
-		response.Error(c, http.StatusInternalServerError, "Failed to refresh platform")
+		response.Fail(c, response.ErrServerInternal)
 		return
 	}
 
@@ -191,7 +184,7 @@ func (m *ModuleCrawler) RefreshSinglePlatform(c *gin.Context) {
 func (m *ModuleCrawler) GetRefreshStatus(c *gin.Context) {
 	logs, err := m.service.GetRecentRefreshLogs(10)
 	if err != nil {
-		response.Error(c, http.StatusInternalServerError, "Failed to get refresh logs")
+		response.Fail(c, response.ErrServerInternal)
 		return
 	}
 
@@ -208,7 +201,7 @@ func (m *ModuleCrawler) GetRateLimitInfo(c *gin.Context) {
 
 	current, limit, window, err := m.limiter.GetRefreshRateLimitInfo(userID, platform)
 	if err != nil {
-		response.Error(c, http.StatusInternalServerError, "Failed to get rate limit info")
+		response.Fail(c, response.ErrServerInternal)
 		return
 	}
 
@@ -234,7 +227,7 @@ func (m *ModuleCrawler) GetContestStats(c *gin.Context) {
 		Group("platform, status").
 		Order("platform, status").
 		Find(&stats).Error; err != nil {
-		response.Error(c, http.StatusInternalServerError, "Failed to get stats")
+		response.Fail(c, response.ErrServerInternal)
 		return
 	}
 
@@ -246,7 +239,7 @@ func (m *ModuleCrawler) GetRefreshLogs(c *gin.Context) {
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "50"))
 	logs, err := m.service.GetRecentRefreshLogs(limit)
 	if err != nil {
-		response.Error(c, http.StatusInternalServerError, "Failed to get refresh logs")
+		response.Fail(c, response.ErrServerInternal)
 		return
 	}
 
@@ -257,12 +250,12 @@ func (m *ModuleCrawler) GetRefreshLogs(c *gin.Context) {
 func (m *ModuleCrawler) DeleteContest(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		response.Error(c, http.StatusBadRequest, "Invalid contest ID")
+		response.Fail(c, response.ErrInvalidRequest)
 		return
 	}
 
 	if err := database.DB.Delete(&model.Contest{}, id).Error; err != nil {
-		response.Error(c, http.StatusInternalServerError, "Failed to delete contest")
+		response.Fail(c, response.ErrServerInternal)
 		return
 	}
 

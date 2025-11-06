@@ -132,7 +132,7 @@ func (c *NowCoderCrawler) crawlHostContests(ctx context.Context) ([]*model.Conte
 	// 主机竞赛页面
 	url := "https://ac.nowcoder.com/acm/contest/vip-index?topCategoryFilter=13"
 
-	resp, err := c.client.R().
+	_, err := c.client.R().
 		SetContext(ctx).
 		Get(url)
 

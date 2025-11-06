@@ -1,12 +1,14 @@
 package crawler
 
 import (
+	"context"
 	"fmt"
-	"nicccce-acm-calendar-api/internal/global/redis"
+	redisclient "nicccce-acm-calendar-api/internal/global/redis"
 	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 )
 
 type RateLimiter struct {
@@ -27,12 +29,12 @@ func (r *RateLimiter) CheckRateLimit(key string, limit int, window time.Duration
 
 	// 使用Redis sorted set实现滑动窗口限流
 	// 移除过期的时间戳
-	if err := redis.RDB.ZRemRangeByScore(key, "0", fmt.Sprintf("%d", windowStart)).Err(); err != nil {
+	if err := redisclient.RedisClient.ZRemRangeByScore(context.Background(), key, "0", fmt.Sprintf("%d", windowStart)).Err(); err != nil {
 		return false, err
 	}
 
 	// 获取当前窗口内的请求数量
-	count, err := redis.RDB.ZCard(key).Result()
+	count, err := redisclient.RedisClient.ZCard(context.Background(), key).Result()
 	if err != nil {
 		return false, err
 	}
@@ -42,7 +44,7 @@ func (r *RateLimiter) CheckRateLimit(key string, limit int, window time.Duration
 	}
 
 	// 添加当前请求时间戳
-	if err := redis.RDB.ZAdd(key, redis.Z{
+	if err := redisclient.RedisClient.ZAdd(context.Background(), key, redis.Z{
 		Score:  float64(now),
 		Member: now,
 	}).Err(); err != nil {
@@ -50,7 +52,7 @@ func (r *RateLimiter) CheckRateLimit(key string, limit int, window time.Duration
 	}
 
 	// 设置key的过期时间
-	if err := redis.RDB.Expire(key, window+time.Second).Err(); err != nil {
+	if err := redisclient.RedisClient.Expire(context.Background(), key, window+time.Second).Err(); err != nil {
 		return false, err
 	}
 
@@ -94,19 +96,19 @@ func (r *RateLimiter) CheckRefreshLimit(userID uint, platform string) (bool, tim
 	windowStart := now - int64(window.Seconds())
 
 	// 移除过期的时间戳
-	if err := redis.RDB.ZRemRangeByScore(key, "0", fmt.Sprintf("%d", windowStart)).Err(); err != nil {
+	if err := redisclient.RedisClient.ZRemRangeByScore(context.Background(), key, "0", fmt.Sprintf("%d", windowStart)).Err(); err != nil {
 		return false, 0, err
 	}
 
 	// 获取当前窗口内的请求数量
-	count, err := redis.RDB.ZCard(key).Result()
+	count, err := redisclient.RedisClient.ZCard(context.Background(), key).Result()
 	if err != nil {
 		return false, 0, err
 	}
 
 	if count >= int64(limit) {
 		// 获取最早的时间戳来计算剩余时间
-		oldest, err := redis.RDB.ZRangeWithScores(key, 0, 0).Result()
+		oldest, err := redisclient.RedisClient.ZRangeWithScores(context.Background(), key, 0, 0).Result()
 		if err != nil {
 			return false, 0, err
 		}
@@ -121,7 +123,7 @@ func (r *RateLimiter) CheckRefreshLimit(userID uint, platform string) (bool, tim
 	}
 
 	// 添加当前请求时间戳
-	if err := redis.RDB.ZAdd(key, redis.Z{
+	if err := redisclient.RedisClient.ZAdd(context.Background(), key, redis.Z{
 		Score:  float64(now),
 		Member: now,
 	}).Err(); err != nil {
@@ -129,7 +131,7 @@ func (r *RateLimiter) CheckRefreshLimit(userID uint, platform string) (bool, tim
 	}
 
 	// 设置key的过期时间
-	if err := redis.RDB.Expire(key, window+time.Second).Err(); err != nil {
+	if err := redisclient.RedisClient.Expire(context.Background(), key, window+time.Second).Err(); err != nil {
 		return false, 0, err
 	}
 
@@ -146,12 +148,12 @@ func (r *RateLimiter) GetRefreshRateLimitInfo(userID uint, platform string) (int
 	windowStart := now - int64(window.Seconds())
 
 	// 移除过期的时间戳
-	if err := redis.RDB.ZRemRangeByScore(key, "0", fmt.Sprintf("%d", windowStart)).Err(); err != nil {
+	if err := redisclient.RedisClient.ZRemRangeByScore(context.Background(), key, "0", fmt.Sprintf("%d", windowStart)).Err(); err != nil {
 		return 0, 0, 0, err
 	}
 
 	// 获取当前计数
-	count, err := redis.RDB.ZCard(key).Result()
+	count, err := redisclient.RedisClient.ZCard(context.Background(), key).Result()
 	if err != nil {
 		return 0, 0, 0, err
 	}

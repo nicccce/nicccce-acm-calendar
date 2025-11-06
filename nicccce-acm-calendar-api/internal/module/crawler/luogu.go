@@ -104,7 +104,7 @@ func (c *LuoguCrawler) crawlMultiplePages(ctx context.Context) ([]*model.Contest
 
 		resp, err := c.client.R().
 			SetContext(ctx).
-			SetHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x極") AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36").
+			SetHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36").
 			Get(url)
 
 		if err != nil {
@@ -159,7 +159,7 @@ func (c *LuoguCrawler) crawlMultiplePages(ctx context.Context) ([]*model.Contest
 				StartTime:       startTime,
 				EndTime:         endTime,
 				DurationSeconds: duration,
-				ContestURL:      fmt.Sprintf("https极www.luogu.com.cn/contest/%d", contestData.ID),
+				ContestURL:      fmt.Sprintf("https://www.luogu.com.cn/contest/%d", contestData.ID),
 				Status:          status,
 				SourceID:        fmt.Sprintf("luogu-%d", contestData.ID),
 				LastUpdated:     now,

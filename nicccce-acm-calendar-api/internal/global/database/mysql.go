@@ -5,7 +5,6 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"gorm.io/gorm/schema"
 	"nicccce-acm-calendar-api/config"
 	"nicccce-acm-calendar-api/internal/model"
 	"nicccce-acm-calendar-api/tools"
@@ -29,9 +28,9 @@ func Init() {
 		config.Get().Mysql.Port,
 		config.Get().Mysql.DBName,
 	)
-	// gormConfig := &gorm.Config{
-	// 	NamingStrategy: schema.NamingStrategy{SingularTable: true}, // 还是单数表名好
-	// }
+	gormConfig := &gorm.Config{
+		//NamingStrategy: schema.NamingStrategy{SingularTable: true}, // 还是单数表名好
+	}
 
 	switch config.Get().Mode {
 	case config.ModeDebug:

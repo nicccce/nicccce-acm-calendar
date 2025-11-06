@@ -2,6 +2,7 @@ package module
 
 import (
 	"github.com/gin-gonic/gin"
+	"nicccce-acm-calendar-api/internal/module/crawler"
 	"nicccce-acm-calendar-api/internal/module/ping"
 )
 
@@ -20,7 +21,6 @@ func registerModule(m []Module) {
 func init() {
 	// Register your module here
 	registerModule([]Module{
-		&user.ModuleUser{},
 		&ping.ModulePing{},
 		&crawler.ModuleCrawler{},
 	})

@@ -10,17 +10,17 @@ import (
 )
 
 type Scheduler struct {
-	cron          *cron.Cron
+	cron           *cron.Cron
 	crawlerService *CrawlerService
-	mu            sync.RWMutex
-	jobs          map[string]cron.EntryID
+	mu             sync.RWMutex
+	jobs           map[string]cron.EntryID
 }
 
 func NewScheduler(crawlerService *CrawlerService) *Scheduler {
 	return &Scheduler{
-		cron:          cron.New(cron.WithSeconds()),
+		cron:           cron.New(cron.WithSeconds()),
 		crawlerService: crawlerService,
-		jobs:          make(map[string]cron.EntryID),
+		jobs:           make(map[string]cron.EntryID),
 	}
 }
 
@@ -59,7 +59,7 @@ func (s *Scheduler) AddPlatformRefreshJob(platform, schedule string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	crawler, exists := GetCrawler(platform)
+	_, exists := GetCrawler(platform)
 	if !exists {
 		return fmt.Errorf("crawler for platform %s not found", platform)
 	}
@@ -104,7 +104,7 @@ func (s *Scheduler) GetScheduledJobs() []JobInfo {
 	for _, entry := range entries {
 		jobInfo := JobInfo{
 			ID:       int(entry.ID),
-			Schedule: entry.Schedule.String(),
+			Schedule: fmt.Sprintf("%v", entry.Schedule),
 			Next:     entry.Next,
 			Prev:     entry.Prev,
 		}
@@ -140,7 +140,7 @@ func (s *Scheduler) updateContestStatusJob() {
 // ManualRefresh 手动触发刷新
 func (s *Scheduler) ManualRefresh(platform string) (*RefreshResult, error) {
 	ctx := context.Background()
-	
+
 	if platform == "all" {
 		results, err := s.crawlerService.RefreshAllPlatforms(ctx)
 		if err != nil {
