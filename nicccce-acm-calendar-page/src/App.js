@@ -1,14 +1,9 @@
 import React from 'react';
-import { Layout, Menu, theme } from 'antd';
+import { Layout, theme } from 'antd';
 import { Outlet } from 'react-router-dom';
-import {
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
-} from '@ant-design/icons';
 import './App.css';
 
-const { Header, Sider, Content } = Layout;
+const { Header, Content } = Layout;
 
 function App() {
   const {
@@ -17,36 +12,6 @@ function App() {
 
   return (
     <Layout className="layout">
-      <Sider trigger={null} collapsible collapsed={false}>
-        <div className="demo-logo-vertical" />
-        <Menu
-          theme="dark"
-          mode="inline"
-          defaultSelectedKeys={['1']}
-          items={[
-            {
-              key: '1',
-              icon: <UserOutlined />,
-              label: '首页',
-            },
-            {
-              key: '2',
-              icon: <VideoCameraOutlined />,
-              label: '比赛列表',
-            },
-            {
-              key: '3',
-              icon: <UploadOutlined />,
-              label: '比赛日历',
-            },
-            {
-              key: '4',
-              icon: <UploadOutlined />,
-              label: '个人中心',
-            },
-          ]}
-        />
-      </Sider>
       <Layout>
         <Header
           style={{

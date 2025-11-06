@@ -41,7 +41,8 @@ class ApiService {
   async getContests(params = {}) {
     try {
       const response = await apiClient.get('/contests', { params });
-      return response;
+      // 返回实际的数据而不是整个响应对象
+      return response.data;
     } catch (error) {
       console.error('获取比赛列表失败:', error);
       throw error;
@@ -52,7 +53,7 @@ class ApiService {
   async getContestById(id) {
     try {
       const response = await apiClient.get(`/contests/${id}`);
-      return response;
+      return response.data;
     } catch (error) {
       console.error('获取比赛详情失败:', error);
       throw error;
@@ -63,7 +64,7 @@ class ApiService {
   async getContestsByPlatform(platform) {
     try {
       const response = await apiClient.get(`/contests/platform/${platform}`);
-      return response;
+      return response.data;
     } catch (error) {
       console.error('根据平台获取比赛失败:', error);
       throw error;
@@ -74,7 +75,7 @@ class ApiService {
   async getContestsByStatus(status) {
     try {
       const response = await apiClient.get(`/contests/status/${status}`);
-      return response;
+      return response.data;
     } catch (error) {
       console.error('根据状态获取比赛失败:', error);
       throw error;
@@ -85,7 +86,7 @@ class ApiService {
   async refreshAllPlatforms() {
     try {
       const response = await apiClient.post('/refresh');
-      return response;
+      return response.data;
     } catch (error) {
       console.error('刷新所有平台失败:', error);
       throw error;
@@ -96,7 +97,7 @@ class ApiService {
   async refreshSinglePlatform(platform) {
     try {
       const response = await apiClient.post(`/refresh/${platform}`);
-      return response;
+      return response.data;
     } catch (error) {
       console.error('刷新单个平台失败:', error);
       throw error;

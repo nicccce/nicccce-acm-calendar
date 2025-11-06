@@ -5,9 +5,283 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 20px;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* 容器样式 */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 头部样式 */
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.header h1 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}
+
+.header p {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+/* 控制区域样式 */
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.refresh-btn {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.refresh-btn:hover {
+  background: #45a049;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.refresh-btn:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.last-update {
+  color: white;
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+/* 筛选器样式 */
+.filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  background: rgba(255,255,255,0.2);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 6px 12px;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.filter-btn:hover, .filter-btn.active {
+  background: rgba(255,255,255,0.3);
+  border-color: rgba(255,255,255,0.5);
+}
+
+/* 竞赛网格样式 */
+.contest-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+/* 竞赛卡片样式 */
+.contest-card {
+  background: white;
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.contest-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* 平台标签样式 */
+.platform-tag {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  color: white;
+}
+
+/* 比赛名称样式 */
+.contest-name {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* 比赛信息样式 */
+.contest-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  color: #666;
+  font-size: 0.8rem;
+}
+
+.info-icon {
+  font-size: 0.9rem;
+  min-width: 16px;
+}
+
+.time-remaining {
+  font-weight: bold;
+  color: #e74c3c;
+  margin-top: 8px;
+  font-size: 0.8rem;
+}
+
+/* 比赛链接样式 */
+.contest-link {
+  display: inline-block;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 20px;
+  margin-top: 10px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  text-align: center;
+  font-size: 0.85rem;
+  width: 100%;
+  height: 40px;
+  line-height: 28px;
+}
+
+.contest-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+}
+
+/* 加载状态样式 */
+.loading {
+  text-align: center;
+  color: white;
+  font-size: 1.1rem;
+  padding: 40px;
+}
+
+/* 错误状态样式 */
+.error {
+  background: #ffebee;
+  color: #c62828;
+  padding: 12px;
+  border-radius: 8px;
+  margin: 15px 0;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+/* 无比赛信息样式 */
+.no-contests {
+  text-align: center;
+  color: white;
+  font-size: 1rem;
+  padding: 40px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+}
+
+/* 状态指示器样式 */
+.status-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+.status-upcoming { background-color: #FFA500; }
+.status-running { background-color: #4CAF50; }
+.status-finished { background-color: #666; }
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .contest-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 10px;
+  }
+  
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filters {
+    justify-content: center;
+  }
+  
+  .contest-card {
+    padding: 10px;
+  }
+  
+  body {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contest-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .header h1 {
+    font-size: 1.8rem;
+  }
+  
+  body {
+    padding: 8px;
+  }
 }
